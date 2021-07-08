@@ -1,6 +1,8 @@
 import torch.nn as nn
 
 # sequential based model
+from torchvision import models
+
 '''
 seq_model = nn.Sequential(
     nn.Conv2d(3, 10, kernel_size=5),
@@ -50,4 +52,4 @@ seq_model = nn.Sequential(
     nn.ReLU(),
 )
 
-net = seq_model
+net = models.resnet18()#seq_model

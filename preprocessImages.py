@@ -76,7 +76,7 @@ for index, image in enumerate(images):
         scale = 1.0
         M = cv2.getRotationMatrix2D(center, randomAngle, scale)
         rotatedImg = cv2.warpAffine(img, M, (w, h))
-        randomFilter = random.randrange(1, 5)
+        randomFilter = random.randrange(1, 4)
 
         # Case 5: Apply no filter
         finalImg = rotatedImg
@@ -93,10 +93,6 @@ for index, image in enumerate(images):
             print("Median Blur")
             # Case 3: Median Blur
             finalImg = cv2.medianBlur(rotatedImg, 5)
-        elif randomFilter == 4:
-            print("Salt and Pepper Noise")
-            # Case 4: Salt and Pepper noise
-            finalImg = add_noise(rotatedImg, h, w)
         csvData.append(imageColumn)
         cv2.imwrite(img_dir + str(imageId) + ".jpg", finalImg)
         imageId = imageId + 1

@@ -9,14 +9,19 @@ from torchvision import transforms
 from dataset import ImageAnglesDataset
 from regressionNet import net
 
+img_dir = 'D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/images'
+new_csv_dir = 'D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/Codex_train_new.csv'
+
 criterion = nn.MSELoss(reduction='mean')
 optimizer = optim.Adam(net.parameters(), lr=1E-4, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=False)
 
 transform = transforms.Compose([
     transforms.ToTensor(), transforms.Normalize([0.5], [0.5])])
 
-angles_dataset = ImageAnglesDataset(csv_file='D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/Codex_train.csv',
-                                    root_dir='D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/train')
+dataset = ImageAnglesDataset(csv_file=new_csv_dir,
+                             root_dir=img_dir)
+angles_dataset, angles_dataset_test = torch.utils.data.random_split(dataset, [3000, 2250])
+
 data_loader = DataLoader(angles_dataset, batch_size=10, shuffle=True)
 
 # net.load_state_dict(torch.load('weights.pt'))
@@ -55,9 +60,7 @@ for epoch in range(3):
 
 torch.save(net.state_dict(), 'D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/weights.pt')
 
-angles_dataset_test = ImageAnglesDataset(
-    csv_file='D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/Codex_test.csv',
-    root_dir='D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/train')
+
 data_loader_test = DataLoader(angles_dataset_test, batch_size=len(angles_dataset_test))
 
 test_iterator = iter(data_loader_test)
@@ -70,5 +73,6 @@ np.set_printoptions(suppress=True)
 test_test = np.concatenate((labels, results), 1) * 360
 print(test_test)
 error = np.sum(np.subtract(labels, results) ** 2, 0) / len(labels)
-pd.DataFrame(test_test,columns=['labels','results']).to_csv('D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/test_res.csv')
+pd.DataFrame(test_test, columns=['labels', 'results']).to_csv(
+    'D:/Dokumente/Uni/Master/Indas/BMW - Material-20210512/test_res.csv')
 print(error)
